@@ -1,0 +1,56 @@
+snippet #!e
+	#!/usr/bin/env bash
+
+snippet ++
+	((++${1}))
+snippet --
+	((--${1}))
+snippet fn
+	${1:function}() {
+		${2:#body}
+	}
+snippet parseargs
+	usage() {
+		echo "Usage: ./script [option] [argument]"
+		echo
+		echo "Options:"
+		echo "	-a, --arg1      - arg1 msg"
+		echo "	--option1       - option1 msg"
+		echo "	-h, --help      - display this help and exit"
+		exit 0
+	}
+
+	POSITIONAL=()
+
+	while [[ $# -gt 0 ]]; do
+		key="$${1:1}"
+
+		case ${key} in
+			-a|--arg1)
+				ARG1="$${2:2}"
+				shift # past argument
+				shift # past value
+			;;
+			--option1)
+				OPTION1=1
+				shift # past argument
+			;;
+			-h|--help)
+				usage
+			;;
+			*) # unknown option
+				POSITIONAL+=("$${1:1}") # save it in an array for later
+				shift # past argument
+				;;
+		esac
+	done
+
+	set -- "${POSITIONAL[@]}" # restore positional parameter
+
+	echo "ARG1 = ${ARG1}"
+	echo "OPTION1 = ${OPTION1}"
+
+	echo "$*"
+	# ./script --arg1 22 --option1 asd111 qwe222
+	${3}
+
